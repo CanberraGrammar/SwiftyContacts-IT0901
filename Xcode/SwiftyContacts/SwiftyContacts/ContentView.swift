@@ -8,27 +8,26 @@
 
 import SwiftUI
 
+struct Contact {
+    let firstName: String
+    let lastName: String
+}
+
 struct ContentView: View {
+        
+    let contactArray = [
+        Contact(firstName: "Alex", lastName: "Derlacki"),
+        Contact(firstName: "Matt", lastName: "Brown"),
+        Contact(firstName: "Indie", lastName: "Saunders"),
+        Contact(firstName: "Gabe", lastName: "Francis"),
+        Contact(firstName: "Matt", lastName: "Crafter")
+    ]
+            
     var body: some View {
-        List {
+        List(contactArray, id: \.firstName) { contact in
             HStack {
-                Text("Alex")
-                Text("Derlacki")
-                    .fontWeight(.bold)
-            }
-            HStack {
-                Text("Indie")
-                Text("Saunders")
-                    .fontWeight(.bold)
-            }
-            HStack {
-                Text("Gabe")
-                Text("Francis")
-                    .fontWeight(.bold)
-            }
-            HStack {
-                Text("Matt")
-                Text("Crafter")
+                Text(contact.firstName)
+                Text(contact.lastName)
                     .fontWeight(.bold)
             }
         }
