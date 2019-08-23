@@ -8,30 +8,100 @@
 
 import SwiftUI
 
-struct Contact {
+struct Contact: Identifiable {
+    let id: String
     let firstName: String
     let lastName: String
 }
 
-struct ContentView: View {
+struct AddContactModalView: View {
+    
+    @Environment(\.presentationMode) var presentationMode
+    
+    @State var firstName: String = ""
+    @State var lastName: String = ""
+    @Binding var contactArray: [Contact]
+    
+    var body: some View {
         
-    let contactArray = [
-        Contact(firstName: "Alex", lastName: "Derlacki"),
-        Contact(firstName: "Matt", lastName: "Brown"),
-        Contact(firstName: "Indie", lastName: "Saunders"),
-        Contact(firstName: "Gabe", lastName: "Francis"),
-        Contact(firstName: "Matt", lastName: "Crafter")
+        NavigationView {
+        
+            HStack {
+                TextField("First Name", text: $firstName)
+                TextField("Last Name", text: $lastName)
+            }
+        
+        .navigationBarTitle("Add a new contact")
+        .navigationBarItems(trailing:
+            Button(action: {
+                
+                let newContact = Contact(id: UUID().uuidString, firstName: self.firstName, lastName: self.lastName)
+                
+                self.contactArray.append(newContact)
+                
+                // self.presentationMode.value.dismiss()
+                
+            }, label: {
+                Text("Save")
+            })
+        )
+            
+        }
+        
+    }
+    
+}
+
+struct ContentView: View {
+    
+    @State var contactArray = [
+        Contact(id: UUID().uuidString, firstName: "Alex", lastName: "Derlacki"),
+        Contact(id: UUID().uuidString, firstName: "Matt", lastName: "Brown"),
+        Contact(id: UUID().uuidString, firstName: "Indie", lastName: "Saunders"),
+        Contact(id: UUID().uuidString, firstName: "Gabe", lastName: "Francis"),
+        Contact(id: UUID().uuidString, firstName: "Matt", lastName: "Crafter")
     ]
+    
+    @State var showAddContactModalView = false
             
     var body: some View {
-        List(contactArray, id: \.firstName) { contact in
-            HStack {
-                Text(contact.firstName)
-                Text(contact.lastName)
-                    .fontWeight(.bold)
+        
+        NavigationView {
+        
+            List(contactArray) { contact in
+                HStack {
+                    Text(contact.firstName)
+                    Text(contact.lastName)
+                        .fontWeight(.bold)
+                }
             }
+            
+        .navigationBarTitle("Swifty Contacts")
+        .navigationBarItems(trailing:
+            Button(action: {
+                self.showAddContactModalView = true
+            }, label: {
+                Text("Add")
+            })
+        )
+                        
         }
+        
+        .sheet(isPresented: $showAddContactModalView, content: {
+            AddContactModalView(contactArray: self.$contactArray)
+        })
+        
     }
+    
+    func addContact() {
+        
+        let newContact = Contact(id: UUID().uuidString, firstName: "Lachlan", lastName: "Coupland")
+        contactArray.append(newContact)
+        
+        print(UUID().uuidString)
+        
+    }
+    
 }
 
 #if DEBUG
