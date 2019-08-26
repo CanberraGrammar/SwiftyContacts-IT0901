@@ -14,6 +14,21 @@ struct Contact: Identifiable {
     let lastName: String
 }
 
+struct ContactDetailView: View {
+    
+    let contactObject: Contact
+    
+    var body: some View {
+        
+        VStack {
+            Text(contactObject.firstName)
+            Text(contactObject.lastName)
+        }
+        
+    }
+    
+}
+
 struct AddContactModalView: View {
     
     @Environment(\.presentationMode) var presentationMode
@@ -39,7 +54,11 @@ struct AddContactModalView: View {
                 
                 self.contactArray.append(newContact)
                 
+                // This only works in Beta 5
                 // self.presentationMode.value.dismiss()
+                
+                // This works in Beta 6
+                self.presentationMode.wrappedValue.dismiss()
                 
             }, label: {
                 Text("Save")
@@ -68,12 +87,16 @@ struct ContentView: View {
         
         NavigationView {
         
-            List(contactArray) { contact in
-                HStack {
-                    Text(contact.firstName)
-                    Text(contact.lastName)
-                        .fontWeight(.bold)
-                }
+            List {
+                ForEach(contactArray) { contact in
+                    NavigationLink(destination: ContactDetailView(contactObject: contact)) {
+                        HStack {
+                            Text(contact.firstName)
+                            Text(contact.lastName)
+                                .fontWeight(.bold)
+                        }
+                    }
+                }.onDelete(perform: delete)
             }
             
         .navigationBarTitle("Swifty Contacts")
@@ -93,6 +116,17 @@ struct ContentView: View {
         
     }
     
+    func delete(at offsets: IndexSet) {
+        
+        if let idxToDelete = offsets.first {
+            
+            contactArray.remove(at: idxToDelete)
+            
+        }
+        
+    }
+    
+    /*
     func addContact() {
         
         let newContact = Contact(id: UUID().uuidString, firstName: "Lachlan", lastName: "Coupland")
@@ -101,6 +135,7 @@ struct ContentView: View {
         print(UUID().uuidString)
         
     }
+     */
     
 }
 
